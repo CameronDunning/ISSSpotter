@@ -8,7 +8,7 @@
  */
 const request = require("request");
 
-const fetchMyIP = function(callback) {
+const fetchMyIP = callback => {
   // use request to fetch IP address from JSON API
   const url = "https://api.ipify.org/?format=json";
   request(url, (error, resp, body) => {
@@ -51,4 +51,49 @@ const fetchCoordsByIP = (IP, callback) => {
   });
 };
 
-module.exports = { fetchMyIP, fetchCoordsByIP };
+const fetchISSFlyOverTimes = (coords, callback) => {
+  const url = `http://api.open-notify.org/iss-pass.json?lat=${coords.latitude}&lon=${coords.longitude}`;
+  request(url, (error, resp, body) => {
+    // error can be set if invalid domain, user is offline, etc.
+    if (error) {
+      callback(error, null);
+      return;
+    }
+    // if non-200 status, assume server error
+    if (resp.statusCode !== 200) {
+      const msg = `Status Code ${resp.statusCode} when fetching flyover times. Response: ${body}`;
+      callback(Error(msg), null);
+      return;
+    }
+    const data = JSON.parse(body);
+    callback(null, data.response);
+  });
+};
+
+const nextISSTimesForMyLocation = callback => {
+  let IP = fetchMyIP((error, ip) => {
+    if (error) {
+      console.log("It didn't work!", error);
+      return;
+    }
+
+    return fetchCoordsByIP(ip, (error, data) => {
+      if (error) {
+        console.log("It didn't work!", error);
+        return;
+      }
+
+      return fetchISSFlyOverTimes(data, (error, pass) => {
+        if (error) {
+          console.log("It didn't work!", error);
+          return;
+        }
+
+        return callback(error, pass);
+      });
+    });
+  });
+};
+
+module.exports = { fetchMyIP, fetchCoordsByIP, fetchISSFlyOverTimes };
+module.exports = { nextISSTimesForMyLocation };
