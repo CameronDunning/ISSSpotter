@@ -1,0 +1,22 @@
+{
+  "name": "issspotter",
+  "version": "1.0.0",
+  "description": "Tells us the next ISS flyover based on our GPS coordinates (obtained from IP address)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CameronDunning/ISSSpotter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/CameronDunning/ISSSpotter/issues"
+  },
+  "homepage": "https://github.com/CameronDunning/ISSSpotter#readme",
+  "dependencies": {
+    "request": "^2.88.0"
+  }
+}
